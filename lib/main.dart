@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:pytorch_mobile/enums/dtype.dart';
 import 'package:pytorch_mobile/pytorch_mobile.dart';
 import 'package:pytorch_mobile/model.dart';
 import 'package:image/image.dart' as img;
@@ -110,14 +111,19 @@ class _HomePageState extends State<HomePage> {
 
   // The core logic: process image, run model, and handle output
   // The core logic: process image, run model, and handle output
+  // The core logic: process image, run model, and handle output
+  // The core logic: process image, run model, and handle output
   Future<void> _runInference() async {
     if (_image == null || _model == null || _classNames == null) return;
 
     // 1. Preprocess the image
     final inputTensor = await _preprocessImage(_image!);
 
-    // 2. Run inference with a single argument
-    final output = await _model!.getPrediction(inputTensor);
+    // 2. Run inference with the arguments packed into a List<dynamic>
+    // This is the key change to fix the errors.
+    final output = await _model!.getPrediction(
+      inputTensor, imageSize as List<int>, imageSize as DType,
+    );
 
     // 3. Post-process the output
     if (output == null) return;
@@ -141,7 +147,6 @@ class _HomePageState extends State<HomePage> {
       _isLoading = false;
     });
   }
-
   Future<Float32List> _preprocessImage(File imageFile) async {
     // Decode the image file to an image object
     img.Image? image = img.decodeImage(await imageFile.readAsBytes());
