@@ -20,14 +20,19 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.walker_81131.snake_identifier_ondevice"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        // ✅ Kotlin DSL syntax for ABI filters:
+        ndk {
+            abiFilters.add("armeabi-v7a")
+            abiFilters.add("arm64-v8a")
+            abiFilters.add("x86")
+            abiFilters.add("x86_64")
+        }
     }
 
     buildTypes {
@@ -37,6 +42,20 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging = true       // keep .so files intact
+        }
+        resources {
+            excludes += setOf("META-INF/*")
+        }
+    }
+
+    aaptOptions {
+        noCompress += listOf("ptl")          // don’t compress .ptl model file
+    }
+
 }
 
 flutter {
