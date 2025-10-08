@@ -32,7 +32,7 @@ dependencies:
     sdk: flutter
 
   # For on-device inference with PyTorch Lite models
-  pytorch_mobile: ^0.2.2
+  pytorch_lite: ^1.1.2
 
   # For picking images from camera/gallery
   image_picker: ^1.1.2
