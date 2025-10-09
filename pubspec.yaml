@@ -9,7 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  pytorch_lite: ^1.1.0
+  pytorch_lite: ^4.3.2
   camera: ^0.11.0+1
   csv: ^6.0.0
   path_provider: ^2.0.11
@@ -28,3 +28,9 @@ flutter:
     - assets/snake_model.ptl
     - assets/class_names.txt
     - assets/Snake_Names_And_Venom.csv
+    - assets/icon.png
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon.png"

@@ -1,7 +1,6 @@
 plugins {
     id("com.android.application")
-    id("kotlin-android")
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    id("org.jetbrains.kotlin.android")     // <- modern id
     id("dev.flutter.flutter-gradle-plugin")
 }
 
@@ -10,15 +9,6 @@ android {
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
-    }
-
     defaultConfig {
         applicationId = "com.walker_81131.snake_identifier_ondevice"
         minSdk = flutter.minSdkVersion
@@ -26,44 +16,49 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
 
-        // ✅ Make sure ARM64 is included for real devices
+        // ABIs that ship to real phones
         ndk {
-            abiFilters.add("armeabi-v7a")
-            abiFilters.add("arm64-v8a")
+            abiFilters += listOf("arm64-v8a", "armeabi-v7a")
             abiFilters.add("x86")
             abiFilters.add("x86_64")
+            // (optional) drop x86/x86_64 in release to reduce size
         }
     }
 
     buildTypes {
         release {
-            // TODO: Replace with your own signing config for release builds
             signingConfig = signingConfigs.getByName("debug")
-
-            // (Optional) If you enable shrinking for release:
-            // isMinifyEnabled = true
-            // proguardFiles(
-            //     getDefaultProguardFile("proguard-android-optimize.txt"),
-            //     "proguard-rules.pro"
-            // )
+            // Keep these off until you add keep-rules (see step 4)
+            isMinifyEnabled = false
+            isShrinkResources = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 
-    packagingOptions {
-        jniLibs {
-            useLegacyPackaging = true    // ✅ keep .so files intact for PyTorch Lite
-        }
+    packaging {
+        jniLibs { useLegacyPackaging = true } // fine to keep for .so handling
         resources {
-            excludes += setOf("META-INF/*")
+            // No blanket META-INF excludes here (see step 2)
+            excludes += listOf(
+                "META-INF/LICENSE*",
+                "META-INF/NOTICE*",
+                "META-INF/AL2.0",
+                "META-INF/LGPL2.1"
+            )
         }
     }
 
-    // ✅ Ensure .ptl model files are not compressed by AAPT
-    aaptOptions {
-        noCompress += listOf("ptl")
+    // aaptOptions is deprecated — use this:
+    androidResources {
+        noCompress += setOf("ptl")          // keep .ptl uncompressed
     }
-}
 
-flutter {
-    source = "../.."
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+    kotlinOptions { jvmTarget = JavaVersion.VERSION_11.toString() }
 }
