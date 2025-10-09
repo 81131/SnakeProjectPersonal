@@ -26,7 +26,7 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
 
-        // ✅ Kotlin DSL syntax for ABI filters:
+        // ✅ Make sure ARM64 is included for real devices
         ndk {
             abiFilters.add("armeabi-v7a")
             abiFilters.add("arm64-v8a")
@@ -37,25 +37,31 @@ android {
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
+            // TODO: Replace with your own signing config for release builds
             signingConfig = signingConfigs.getByName("debug")
+
+            // (Optional) If you enable shrinking for release:
+            // isMinifyEnabled = true
+            // proguardFiles(
+            //     getDefaultProguardFile("proguard-android-optimize.txt"),
+            //     "proguard-rules.pro"
+            // )
         }
     }
 
     packagingOptions {
         jniLibs {
-            useLegacyPackaging = true       // keep .so files intact
+            useLegacyPackaging = true    // ✅ keep .so files intact for PyTorch Lite
         }
         resources {
             excludes += setOf("META-INF/*")
         }
     }
 
+    // ✅ Ensure .ptl model files are not compressed by AAPT
     aaptOptions {
-        noCompress += listOf("ptl")          // don’t compress .ptl model file
+        noCompress += listOf("ptl")
     }
-
 }
 
 flutter {

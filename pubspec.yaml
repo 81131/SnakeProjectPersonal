@@ -15,6 +15,7 @@ dependencies:
   path_provider: ^2.0.11
   image: ^4.0.15
   cupertino_icons: ^1.0.6
+  image_picker: ^1.0.7  # Add this line
 
 dev_dependencies:
   flutter_test:
@@ -24,4 +25,6 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/
+    - assets/snake_model.ptl
+    - assets/class_names.txt
+    - assets/Snake_Names_And_Venom.csv
